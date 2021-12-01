@@ -51,7 +51,7 @@
 #endif
 
 using namespace std;
-#include "file.h"
+#include "main.h"
 
 
 // The function below applies the appropriate transform to a 4-vector
