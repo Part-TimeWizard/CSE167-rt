@@ -15,5 +15,5 @@ class Sphere : public Primitive {
 
     private:
         glm::vec3 position; // May need a better way of storing this (start modelview then right multipy w transforms?)
-        glm::vec3 radius;
+        float radius;
 };
