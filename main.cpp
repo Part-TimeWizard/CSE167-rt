@@ -300,7 +300,7 @@ void saveimg(std::vector<BYTE> pixels, int width, int height, const char* filena
 
     // You need to get your image into the pixel vector.  How you do so is up to you.
     // Also, make sure you follow the directions in the writeup, and call FreeImage_Initialise() before using this function.
-
+    std::cout << "In save"<<endl;
     FIBITMAP* img = FreeImage_ConvertFromRawBits(pixels.data(), width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
 
     std::cout << "Saving screenshot: " << filename << std::endl;
@@ -308,3 +308,24 @@ void saveimg(std::vector<BYTE> pixels, int width, int height, const char* filena
     FreeImage_Save(FIF_PNG, img, filename, 0);
 }
 
+int main(int argc, char** argv) {
+
+    FreeImage_Initialise();
+    //initShiz
+
+    std::vector<BYTE> pixelData;
+    int tempWidth = 800;
+    int tempHeight = 800;
+    string outName = "firstTest.png";
+
+    // Temp fill array
+    std::cout << "Beginning fill" <<std::endl;
+    for(int i = 0; i < tempWidth*tempHeight*3; i++) {
+        pixelData.push_back(static_cast<BYTE>(i));
+    }
+    std::cout << "Fill Complete" <<std::endl;
+
+    saveimg(pixelData, tempWidth, tempHeight, outName.c_str());
+
+    FreeImage_DeInitialise();
+}
