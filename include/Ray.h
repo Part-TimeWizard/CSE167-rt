@@ -10,6 +10,10 @@ public:
     
     glm::vec3 getOri();
     glm::vec3 getDir();
+
+    Ray();
+    Ray(glm::vec3 origin, glm::vec3 direction);
+    ~Ray();
 };
 
 #endif

@@ -1,5 +1,5 @@
 #include <glm/glm.hpp>
-#include <Primitive.h>
+#include "Primitive.h" 
 
 #ifndef __RAYHIT_H__
 #define __RAYHIT_H__
@@ -11,6 +11,10 @@ public:
     glm::vec3 h_pos;    //  intersection point vector
     glm::vec3 normal;   //  intersection normal vector
     
+    RayHit(); 
+    RayHit(Ray ray, Primitive solid, glm::vec3 point); 
+    ~RayHit(); 
+
     Ray getRay();
     Primitive getPrim();
     glm::vec3 getPos();
