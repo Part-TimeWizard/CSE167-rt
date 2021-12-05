@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -g -std=c++11 -Wno-deprecated-register -Wno-deprecated-declarations -DGL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 INCFLAGS = -I./glm-0.9.7.1 -I./include/
-LDFLAGS = -L./lib/mac/ -lm  -lfreeimage 
+LDFLAGS = -framework GLUT -framework OpenGL -L./lib/mac/ -lm  -lfreeimage 
 
 RM = /bin/rm -f
 all: RayTracer
