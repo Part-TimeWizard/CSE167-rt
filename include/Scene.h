@@ -14,17 +14,24 @@
 class Scene {
 
     public:
-        Scene();
+        Scene(int imageWidth, int imageHeight, int d = 5, std::string o = "outputImage.png");
 
-        glm::vec2 imageSize;
+        //glm::vec2 imageSize;
+        int imageWidth;
+        int imageHeight;
+        std::vector<BYTE> pixelData;
         int maxDepth;
-        glm::vec3 attenuation;
-        glm::vec3 ambient;
+        glm::vec3 attenuation; 
+        glm::vec3 ambient; // TODO Set per object, not globally
         std::string outFileName;
         std::vector<Primitive> primList; // Used to iterate thru and checkHit of all primitives
 
         void pushTransform();
         void popTransform();
+        void setDepth(int d){maxDepth = d;};
+        void setName(std::string n){outFileName = n;};
+        void setPixel(int x, int y, glm::vec3 color);
+
 
     private:
         enum class TransformType {Translate, Rotate, Scale};
