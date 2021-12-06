@@ -6,7 +6,7 @@
 #include "Scene.h"
 
 Scene::Scene(int imageWidth, int imageHeight, int d = 5, std::string o = "outputImage.png") {
-    pixelData = std::vector<BYTE> a(imageWidth*imageHeight*3, 0);
+    //pixelData = std::vector<BYTE> aname(imageWidth*imageHeight*3, 0);
 }
 
 void Scene::setPixel(int x, int y, glm::vec3 color) {

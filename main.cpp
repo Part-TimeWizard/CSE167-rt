@@ -325,7 +325,7 @@ int main(int argc, char** argv) {
     }
     std::cout << "Fill Complete" <<std::endl;
 
-    saveimg(pixelData, tempWidth, tempHeight, outName.c_str());
+    saveimg(scene.pixelData, tempWidth, tempHeight, outName.c_str());
 
     FreeImage_DeInitialise();
 }
