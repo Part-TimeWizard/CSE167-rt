@@ -1,5 +1,6 @@
 #include <glm/glm.hpp>
 #include "Primitive.h" 
+#include "Ray.h"
 
 #ifndef __RAYHIT_H__
 #define __RAYHIT_H__

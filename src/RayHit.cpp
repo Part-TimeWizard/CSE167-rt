@@ -4,14 +4,14 @@
 ** Constructors
 */
 
-Ray::RayHit() {}
-Ray::~RayHit() {} 
+RayHit::RayHit() {}
+RayHit::~RayHit() {} 
 
-Ray::RayHit (Ray ray, Primitive solid, glm::vec3 point) {
+RayHit::RayHit (Ray ray, Primitive solid, glm::vec3 point) {
     ray = ray;
     solid = solid;
     h_pos = point;
-    normal = glm::normalalize(point);
+    normal = glm::normalize(point);
 }
 
 /*
