@@ -52,7 +52,7 @@
 
 using namespace std;
 #include "main.h"
-#include "include/scene.h"
+#include "include/Scene.h"
 #include "Camera.h"
 
 // The function below applies the appropriate transform to a 4-vector
@@ -318,11 +318,22 @@ int main(int argc, char** argv) {
     string outName = "firstTest.png";
     Scene scene = Scene(tempWidth, tempHeight, 5, outName);
     
+    glm::vec3 testV1 = glm::vec3(1,0,0);
+    glm::vec3 testV2 = glm::vec3(0,1,0);
+    glm::vec3 testV3 = glm::vec3(0,0,1);
+    scene.addTriangle(testV1,testV2,testV3);
     
     // Temp fill array
     std::cout << "Beginning fill" <<std::endl;
+    /*
     for(int i = 0; i < tempWidth*tempHeight*3; i++) {
         scene.pixelData.push_back(static_cast<BYTE>(i));
+    }
+    */
+    for(int y = 0; y < tempHeight; y++) {
+        for(int x = 0; x < tempWidth; x++) {
+            scene.setPixel(x, y, glm::vec3(x,y,0));
+        }
     }
     std::cout << "Fill Complete" <<std::endl;
 
