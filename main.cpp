@@ -340,6 +340,8 @@ int main(int argc, char** argv) {
     for(int y = 0; y < tempHeight; y++) {
         for(int x = 0; x < tempWidth; x++) {
             Ray ray = cam.RayThruPixel(x, y); 
+            RayHit intObj = scene.raycast(ray); 
+            // Can access intObj.ray to use for FindColor() 
             scene.setPixel(x, y, glm::vec3(x,y,0));
         }
     }

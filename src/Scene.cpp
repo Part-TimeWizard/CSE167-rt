@@ -5,6 +5,8 @@
  */
 #include "Scene.h"
 
+glm::vec3 zero(0.0f, 0.0f, 0.0f); // global variable to check no intersection 
+
 Scene::Scene(int iWidth, int iHeight, int d, std::string o) {
     imageWidth = iWidth;
     imageHeight = iHeight;
@@ -42,4 +44,32 @@ void Scene::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3) {
 void Scene::addSphere(glm::vec3 p, float r) {
     Sphere* newSphere = new Sphere(p, r);
     objectStack.push_back(newSphere);
+}
+
+/**
+ * @brief generates intersection object containing point of intersection
+ *        and associated ray 
+ * 
+ * @param ray 
+ * @return RayHit 
+ */
+RayHit Scene::raycast(Ray ray) {
+    RayHit intersection;
+    bool firstHit = true; 
+
+    // iterate through objectStack and check for first intersection 
+    for (Primitive* solid : objectStack) {
+        if (solid == nullptr)
+            continue; 
+
+        glm::vec3 intPos = solid->checkHit(ray); 
+
+        float secDist = glm::distance(intersection.pos, ray.ori); 
+        float intDist = glm::distance(intPos, ray.ori); 
+
+        if (intPos != zero && (firstHit || secDist > intDist))
+            intersection = RayHit(ray, solid, intPos); 
+            firstHit = false; 
+    }
+    return intersection; 
 }
