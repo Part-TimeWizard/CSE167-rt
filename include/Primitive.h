@@ -19,7 +19,7 @@ class Primitive {
     public:
         Primitive();
 
-        virtual glm::vec3 checkHit(Ray r){return glm::vec3(0,0,0);};
+        virtual glm::vec4 checkHit(Ray r){return glm::vec4(0,0,0,0);};
         virtual void transform(glm::vec3){}; // Used to apply transformations to the Primitive, applied in reverse to popTransforms
 
         void setDiffuse(glm::vec3 d){ diffuse = d; };
