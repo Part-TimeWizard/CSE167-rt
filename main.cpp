@@ -217,11 +217,7 @@ void readfile(const char* filename)
                     if (validinput) {
                         
                         glm::mat4 translateMatrix; 
-
-                        // YOUR CODE HERE
-                        // Implement a translation matrix.  You can just use glm built in functions
-                        // if you want.
-                      
+                        translateMatrix = glm::translate(glm::mat4(), glm::vec3(values[0],values[1],values[2]));
                         rightmultiply(translateMatrix, transfstack);
                     }
                 }
@@ -230,11 +226,7 @@ void readfile(const char* filename)
                     if (validinput) {
                         
                         glm::mat4 scaleMatrix;
-
-                        // YOUR CODE HERE
-                        // Implement a scale matrix.  You can just use glm built in functions
-                        // if you want.
-
+                        scaleMatrix = glm::scale(values[0],values[1],values[2]);
                         rightmultiply(scaleMatrix, transfstack);
                     }
                 }
@@ -244,13 +236,8 @@ void readfile(const char* filename)
                         
                         glm::vec3 axis = glm::normalize(glm::vec3(values[0], values[1], values[2]));
                         glm::mat4 rotateMatrix;
-
-                        // YOUR CODE HERE
-                        // Implement a rotation matrix.  You can just use glm built in functions
-                        // if you want.
-
-                        rightmultiply(rotateMatrix, transfstack);
-                        
+                        rotateMatrix = glm::rotate(values[3],axis);
+                        rightmultiply(rotateMatrix, transfstack);   
                     }
                 }
 
@@ -265,6 +252,7 @@ void readfile(const char* filename)
                 else if (cmd == "tri") {
                     validinput = readvals(s, 3, values);
                     // YOUR CODE HERE
+                    // Make new obj, right mult by transfstack
                 }
                 else if (cmd == "vertex") {
                     validinput = readvals(s, 3, values);
