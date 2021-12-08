@@ -9,7 +9,10 @@ void Triangle::transform(glm::vec3) {
     return;
 }
 
-glm::vec3 Triangle::checkHit(glm::vec3 p0, glm::vec3 d) {
+glm::vec3 Triangle::checkHit(Ray::Ray r) {
+    glm::vec3 p0 = r.ori;
+    glm::vec3 d = r.dir;
+    
     glm::vec4 a0 = glm::vec4(position[0],1.0f);
     glm::vec4 a1 = glm::vec4(position[1],1.0f);
     glm::vec4 a2 = glm::vec4(position[2],1.0f);
