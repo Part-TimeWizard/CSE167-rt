@@ -4,6 +4,7 @@
  *  Parent class for Sphere and Triangle, contains material data and virtual class to check for ray intersection.
  */
 #include <glm/glm.hpp>
+#include "Ray.h"
 #pragma once
 
 class Primitive {
@@ -18,7 +19,7 @@ class Primitive {
     public:
         Primitive();
 
-        virtual glm::vec3 checkHit(glm::vec3, glm::vec3){return glm::vec3(0,0,0);};
+        virtual glm::vec3 checkHit(Ray::Ray r){return glm::vec3(0,0,0);};
         virtual void transform(glm::vec3){}; // Used to apply transformations to the Primitive, applied in reverse to popTransforms
 
         void setDiffuse(glm::vec3 d){ diffuse = d; };
