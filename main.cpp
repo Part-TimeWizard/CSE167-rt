@@ -310,9 +310,8 @@ void saveimg(std::vector<BYTE> pixels, int width, int height, const char* filena
 }
 
 int main(int argc, char** argv) {
-
-    FreeImage_Initialise();
-    //initShiz
+    
+    // Initialize Scene and Geometry
     int tempWidth = 800;
     int tempHeight = 800;
     string outName = "firstTest.png";
@@ -331,7 +330,7 @@ int main(int argc, char** argv) {
     Camera cam(eye_default, target_default, up_default, fov_default, tempHeight, tempWidth); 
     cam.computeProjection(); 
 
-    // Temp fill array
+    // Find the colors for each pixel
     std::cout << "Beginning fill" <<std::endl;
     /*
     for(int i = 0; i < tempWidth*tempHeight*3; i++) {
@@ -346,7 +345,10 @@ int main(int argc, char** argv) {
     }
     std::cout << "Fill Complete" <<std::endl;
 
+    // Export Image
+    FreeImage_Initialise();
     saveimg(scene.pixelData, tempWidth, tempHeight, outName.c_str());
-
     FreeImage_DeInitialise();
+
+    // Deinitialize all the objects?
 }
