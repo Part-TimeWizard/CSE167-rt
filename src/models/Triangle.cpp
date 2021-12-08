@@ -4,7 +4,6 @@
  *  
  */
 #include "Triangle.h"
-#include <iostream>
 
 void Triangle::transform(glm::vec3) {
     return;
@@ -28,12 +27,6 @@ glm::vec4 Triangle::checkHit(Ray r) {
 
     glm::vec4 lambdaVec = aInv * b;
 
-    if (lambdaVec[0] >= 0 && lambdaVec[1] >= 0 && lambdaVec[2] >= 0){
-        std::cout<<lambdaVec[0]<<","<<lambdaVec[1]<<","<<lambdaVec[2]<<lambdaVec[3]<<std::endl;
-        std::cout<<a3[0]<<","<<a3[1]<<","<<a3[2]<<","<<a3[3]<<std::endl;
-        std::cout<<std::endl;
-    }
-    
     glm::vec3 q = lambdaVec[0]*position[0] + lambdaVec[1]*position[1] + lambdaVec[2]*position[2];
 
     if(lambdaVec[0] >= 0 && lambdaVec[1] >= 0 && lambdaVec[2] >= 0 && lambdaVec[3] >= 0) {

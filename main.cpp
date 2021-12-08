@@ -341,12 +341,9 @@ int main(int argc, char** argv) {
     for(int y = 0; y < tempHeight; y++) {
         for(int x = 0; x < tempWidth; x++) {
             Ray ray = cam.RayThruPixel(x, y); 
-            //std::cout<<ray.ori[0]<<","<<ray.ori[1]<<","<<ray.ori[2]<<" "<<ray.dir[0]<<","<<ray.dir[1]<<","<<ray.dir[2]<<endl;
+            
             
             RayHit intObj = scene.raycast(ray); 
-            if(ray.dir[1] < 0.002f && ray.dir[2] < 0.002f && ray.dir[1] > -0.002f && ray.dir[2] > -0.002f) {
-                std::cout<<ray.ori[0]<<","<<ray.ori[1]<<","<<ray.ori[2]<<" "<<ray.dir[0]<<","<<ray.dir[1]<<","<<ray.dir[2]<<endl;
-            }
             // Can access intObj.ray to use for FindColor() 
             if(intObj.solid == nullptr) {
                 scene.setPixel(x, y, glm::vec3(0,0,0));
