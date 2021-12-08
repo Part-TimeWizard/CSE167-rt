@@ -53,21 +53,21 @@ void Camera::computeProjection() {
  * @param j 	 height coordinate 
  * @return Ray 	 ray through (i, j) pixel from camera 
  */
-Ray Camera::RayThruPixel(Camera camera, int i, int j) {
+Ray Camera::RayThruPixel(int i, int j) {
 
 	// variables for finding center of pixel when screen ranges (-1,1) to (1,1) 
-	float a = 2 * ((i + 0.5) / camera.w) - 1; 
-	float b = 1 - 2 * ((j + 0.5) / camera.h); 
+	float a = 2 * ((i + 0.5) / w) - 1; 
+	float b = 1 - 2 * ((j + 0.5) / h); 
 
 	// finding directional vector of Ray 
 	// @ref 		RayTracing class slides 
 	// @formula 	d = (aU + bV - W) / |aU + bV - W|  
-	glm::vec3 rayDir = a * camera.p_u + b * camera.p_v - camera.p_a; 
+	glm::vec3 rayDir = a * p_u + b * p_v - p_a; 
 	rayDir = glm::normalize(rayDir); 
 
 	// creating Ray 
 	// might need to scale rayDir so Ray intersects with object 
-	Ray outgoing(camera.eye, rayDir); 
+	Ray outgoing(eye, rayDir); 
 
 	return outgoing; 
 }

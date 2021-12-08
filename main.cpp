@@ -53,7 +53,7 @@
 using namespace std;
 #include "main.h"
 #include "include/Scene.h"
-#include "Camera.h"
+#include "include/Camera.h"
 
 // The function below applies the appropriate transform to a 4-vector
 void matransform(stack<glm::mat4> &transfstack, GLfloat* values)
@@ -322,7 +322,15 @@ int main(int argc, char** argv) {
     glm::vec3 testV2 = glm::vec3(0,1,0);
     glm::vec3 testV3 = glm::vec3(0,0,1);
     scene.addTriangle(testV1,testV2,testV3);
-    
+
+    // Initialize test camera 
+    glm::vec3 eye_default = glm::vec3(5.0f, 0.0f, 0.0f); 
+    glm::vec3 target_default = glm::vec3(0.0f, 1.0f, 0.0f); 
+    glm::vec3 up_default = glm::vec3(0.0f, 1.0f, 0.0f); 
+    float fov_default = 30.0f; 
+    Camera cam(eye_default, target_default, up_default, fov_default, tempHeight, tempWidth); 
+    cam.computeProjection(); 
+
     // Temp fill array
     std::cout << "Beginning fill" <<std::endl;
     /*
@@ -332,6 +340,7 @@ int main(int argc, char** argv) {
     */
     for(int y = 0; y < tempHeight; y++) {
         for(int x = 0; x < tempWidth; x++) {
+            Ray ray = cam.RayThruPixel(x, y); 
             scene.setPixel(x, y, glm::vec3(x,y,0));
         }
     }

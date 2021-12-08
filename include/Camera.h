@@ -26,7 +26,7 @@ public:
 	~Camera(); 
 
 	void computeProjection(); 
-	Ray RayThruPixel(Camera camera, int i, int j); 
+	Ray RayThruPixel(int i, int j); 
 };
 
 #endif 
