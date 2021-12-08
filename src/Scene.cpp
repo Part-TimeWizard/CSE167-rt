@@ -5,7 +5,7 @@
  */
 #include "Scene.h"
 
-Scene::Scene(int iWidth, int iHeight, int d = 5, std::string o = "outputImage.png") {
+Scene::Scene(int iWidth, int iHeight, int d, std::string o) {
     imageWidth = iWidth;
     imageHeight = iHeight;
     maxDepth = d;
@@ -13,7 +13,9 @@ Scene::Scene(int iWidth, int iHeight, int d = 5, std::string o = "outputImage.pn
 
     // TODO remember the better way to do this
     for( int i = 0; i < imageWidth*imageHeight*3; i++ ) {
-        pixelData.push_back(glm::vec3(0,0,0));
+        pixelData.push_back(static_cast<BYTE>(0));
+        pixelData.push_back(static_cast<BYTE>(0));
+        pixelData.push_back(static_cast<BYTE>(0));
     }
 }
 
@@ -33,11 +35,11 @@ void Scene::popTransform() {
 }
 
 void Scene::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3) {
-    Triangle newTri = new Triangle(v1, v2, v3);
-    objectStack.push_back(*newTri);
+    Triangle* newTri = new Triangle(v1, v2, v3);
+    objectStack.push_back(newTri);
 }
 
 void Scene::addSphere(glm::vec3 p, float r) {
-    Sphere newSphere = new Sphere(p, r);
-    objectStack.push_back(*newSphere);
+    Sphere* newSphere = new Sphere(p, r);
+    objectStack.push_back(newSphere);
 }

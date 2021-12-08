@@ -7,8 +7,8 @@ RM = /bin/rm -f
 all: RayTracer
 RayTracer: main.o Camera.o Light.o Ray.o RayHit.o Scene.o Sphere.o Triangle.o
 	$(CC) -o RayTracer main.o Camera.o Light.o Ray.o RayHit.o Scene.o Sphere.o Triangle.o $(LDFLAGS)
-ImageLibraryTest: main.o
-	$(CC) -o ImageLibraryTest main.o $(LDFLAGS)
+ImageLibraryTest: main.o Scene.o
+	$(CC) -o ImageLibraryTest main.o Scene.o $(LDFLAGS)
 main.o: main.cpp
 	$(CC) $(CFLAGS) $(INCFLAGS) -c main.cpp 
 Camera.o: src/Camera.cpp include/Camera.h

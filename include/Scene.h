@@ -8,6 +8,7 @@
 #include "Sphere.h"
 #include <vector>
 #include <string>
+#include <FreeImage.h>
 
 #pragma once
 
