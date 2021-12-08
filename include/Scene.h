@@ -9,6 +9,7 @@
 #include "Sphere.h"
 #include "Ray.h"
 #include "RayHit.h" 
+#include "Camera.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
@@ -32,6 +33,7 @@ class Scene {
         std::string outFileName;
         std::vector<Primitive*> objectStack; // Used to iterate thru and checkHit of all primitives
         std::stack<glm::mat4> transformStack;
+        Camera::Camera camera;
 
         void addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3);
         void addSphere(glm::vec3 p, float r);

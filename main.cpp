@@ -83,14 +83,10 @@ bool readvals(stringstream &s, const int numvals, GLfloat* values)
     return true;
 }
 
-void readfile(const char* filename)
+void readfile(const char* filename, Scene &scene)
 {
     string str, cmd;
     ifstream in;
-
-    // YOUR CODE HERE
-    // We define some variables here as guides.  You will need to either include this function in some sort of class
-    // to get access to them or define the variables globally.
 
     int numused = 0;
     const int numLights = 10; // max 10 point lights.  You can increase this if you want to add more lights.
@@ -102,6 +98,9 @@ void readfile(const char* filename)
     float specular[3];
     float emission[3];
     float shininess;
+
+    int maxVerts = 0;
+    vector<glm::vec3> vertexList;
 
     in.open(filename);
     if (in.is_open()) {
@@ -190,25 +189,26 @@ void readfile(const char* filename)
                         // YOUR CODE HERE
                         // This the the image size, as width, height.
                         // Get these values and store them for use with your raytracer.
+                        scene = new Scene(validinput[0],validinput[1]);
                     }
 
                 }
                 else if (cmd == "maxdepth") {
                     validinput = readvals(s, 1, values);
-                    // YOUR CODE HERE
+                    scene.setDepth(validinput[0]);
                 }
                 else if (cmd == "output") {
                     validinput = readvals(s, 1, values);
-                    // YOUR CODE HERE
+                    scene.setName(validinput[0]);
                 }
                 else if (cmd == "camera") {
                     validinput = readvals(s,10,values); // 10 values eye cen up fov
                     if (validinput) {
-                        
-                        // YOUR CODE HERE
-                        // You'll need to read these values and use them for your own
-                        // camera implementation.  Keep in mind for the raytracer the camera will be static.
-                        
+                        glm::vec3 eye = glm::vec3(validinput[0],validinput[1],validinput[2]);
+                        glm::vec3 target = glm::vec3(validinput[3],validinput[4],validinput[5]);
+                        glm::vec3 up = glm::vec3(validinput[6],validinput[7],validinput[8]);
+                        float fov = validinput[9];
+                        scene.camera = new Camera(eye_default, target_default, up_default, fov_default, scene.imageHeight, scene.imageWidth);
                     }
                  }
                               
@@ -243,7 +243,7 @@ void readfile(const char* filename)
 
                 else if (cmd == "maxverts") {
                     validinput = readvals(s, 1, values);
-                    // YOUR CODE HERE
+                    maxVerts = validinput[0];
                 }
                 else if (cmd == "sphere") {
                     validinput = readvals(s, 4, values);
@@ -251,12 +251,23 @@ void readfile(const char* filename)
                 }
                 else if (cmd == "tri") {
                     validinput = readvals(s, 3, values);
-                    // YOUR CODE HERE
                     // Make new obj, right mult by transfstack
+                    glm::vec3 v1 = vertexList[validinput[0]];
+                    glm::vec3 v2 = vertexList[validinput[1]];
+                    glm::vec3 v3 = vertexList[validinput[2]];
+                    glm::mat4 T = transfstack.top();
+                    v1 = T * v1;
+                    v2 = T * v2;
+                    v3 = T * v3;
+                    scene.addTriangle(v1,v2,v3);
                 }
                 else if (cmd == "vertex") {
                     validinput = readvals(s, 3, values);
-                    // YOUR CODE HERE
+                    if (vertexList.size() < maxVerts){
+                        vertexList.push_back(glm::vec3(validinput[0],validinput[1],validinput[2]));
+                    } else {
+                        cerr << "Max vertices reach, unable to add more\n";
+                    }
                 }
 
 
@@ -317,7 +328,7 @@ int main(int argc, char** argv) {
     glm::vec3 up_default = glm::vec3(0.0f, 1.0f, 0.0f); 
     float fov_default = 30.0f; 
     Camera cam(eye_default, target_default, up_default, fov_default, tempHeight, tempWidth); 
-    cam.computeProjection(); 
+    //cam.computeProjection(); 
 
     // Find the colors for each pixel
     std::cout << "Beginning fill" <<std::endl;
