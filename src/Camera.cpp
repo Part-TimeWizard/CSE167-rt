@@ -7,26 +7,41 @@
 Camera::Camera() {} 
 Camera::~Camera() {} 
 
-Camera::Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 normal, float fov, int height, int width) {
+Camera::Camera(const glm::vec3 position, const glm::vec3 direction, 
+const glm::vec3 normal, float fov, int height, int width) {
+	// Assign basic attributes 
 	eye = position;
 	target = direction;
 	up = normal; 
-	fovy = fov;
-	// fovx = 2 * arctan( tan (fovy/2) * (w/h) )
-	fovx = 2 * glm::atan(glm::tan(fovy / 2) * (width / height)); 
-	aspect = 1.0f;	// world aspect ratio always 1 
 	h = height; 
 	w = width; 
+
+	// Assign appropriate aspect ratio 
+	fovy = glm::tan(fov / 2); 
+	fovx = (w / h) * glm::tan(fov / 2); 
 }
 
 /**
  * @brief computes projection screen 
  * 
- * @param width	width of image 
- * @param height height of image 
  */
-void Camera::computeProjection(int width, int height) { 
-	// must complete
+void Camera::computeProjection() { 
+	// 1) Compute vector from camera position to target position 
+	p_a = target - eye; 
+	p_a = glm::normalize(p_a); 
+
+	// 2) Compute U and V vectors
+	p_u = glm::cross(p_a, up); 
+	p_u = glm::normalize(p_u); 
+	p_v = glm::cross(p_u, p_a); 
+	p_v = glm::normalize(p_v); 
+
+	// 3) Compute position of the center point of the screen 
+	p_c = eye + p_a; 
+
+	// 4) Modify U and V vectors to match size and aspect ratio 
+	p_u = p_u * fovx; 
+	p_v = p_v * (fovx / fovy); 
 }
 
 /**
@@ -40,17 +55,20 @@ void Camera::computeProjection(int width, int height) {
  */
 Ray Camera::RayThruPixel(Camera camera, int i, int j) {
 
-	// variables for finding center of pixel 
-	// when screen ranges (-1,1) to (1,1) 
+	// variables for finding center of pixel when screen ranges (-1,1) to (1,1) 
 	float a = 2 * ((i + 0.5) / camera.w) - 1; 
 	float b = 1 - 2 * ((j + 0.5) / camera.h); 
-	glm::vec3 cpix(a, b, -1); 
 
-	// creating new Ray 
-	Ray outgoing; 
-	outgoing.ori = camera.eye; // origin is camera 
-	outgoing.dir = cpix; 
-	
+	// finding directional vector of Ray 
+	// @ref 		RayTracing class slides 
+	// @formula 	d = (aU + bV - W) / |aU + bV - W|  
+	glm::vec3 rayDir = a * camera.p_u + b * camera.p_v - camera.p_a; 
+	rayDir = glm::normalize(rayDir); 
+
+	// creating Ray 
+	// might need to scale rayDir so Ray intersects with object 
+	Ray outgoing(camera.eye, rayDir); 
+
 	return outgoing; 
 }
 
