@@ -15,10 +15,11 @@ const glm::vec3 normal, float fov, int height, int width) {
 	up = normal; 
 	h = height; 
 	w = width; 
+	aspr = w / h; 
 
-	// Assign appropriate aspect ratio 
+	// Assign appropriate world aspect ratio 
 	fovy = glm::tan(fov / 2); 
-	fovx = (w / h) * glm::tan(fov / 2); 
+	fovx = aspr * glm::tan(fov / 2); 
 }
 
 /**
@@ -27,21 +28,20 @@ const glm::vec3 normal, float fov, int height, int width) {
  */
 void Camera::computeProjection() { 
 	// 1) Compute vector from camera position to target position 
-	p_a = target - eye; 
-	p_a = glm::normalize(p_a); 
+	c_w = eye - target; 
+	c_w = glm::normalize(c_w); 
 
 	// 2) Compute U and V vectors
-	p_u = glm::cross(p_a, up); 
-	p_u = glm::normalize(p_u); 
-	p_v = glm::cross(p_u, p_a); 
-	p_v = glm::normalize(p_v); 
+	c_u = glm::cross(up, c_w); 
+	c_u = glm::normalize(c_u); 
+	c_v = glm::cross(c_w, c_u); 
 
 	// 3) Compute position of the center point of the screen 
-	p_c = eye + p_a; 
+	p_c = eye - c_w; 
 
-	// 4) Modify U and V vectors to match size and aspect ratio 
-	p_u = p_u * fovx; 
-	p_v = p_v * (fovx / fovy); 
+	// 4) Update projection's U and V vectors to match size and aspect ratio 
+	p_u = c_u * fovx; 
+	p_v = c_v * fovy; 
 }
 
 /**
@@ -62,7 +62,7 @@ Ray Camera::RayThruPixel(int i, int j) {
 	// finding directional vector of Ray 
 	// @ref 		RayTracing class slides 
 	// @formula 	d = (aU + bV - W) / |aU + bV - W|  
-	glm::vec3 rayDir = a * p_u + b * p_v - p_a; 
+	glm::vec3 rayDir = a * c_u + b * c_v - c_w; 
 	rayDir = glm::normalize(rayDir); 
 
 	// creating Ray 

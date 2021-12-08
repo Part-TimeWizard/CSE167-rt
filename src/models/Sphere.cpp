@@ -9,6 +9,6 @@ void Sphere::transform(glm::vec3) {
     return;
 }
 
-glm::vec3 Sphere::checkHit(Ray::Ray r) {
-    return glm::vec3(0,0,0);
+glm::vec4 Sphere::checkHit(Ray r) {
+    return glm::vec4(0,0,0,0);
 }

@@ -6,9 +6,9 @@
 #include "Primitive.h"
 
 Primitive::Primitive() {
+    shininess = 0.0f;
     diffuse = glm::vec3(0,0,0);
     specular = glm::vec3(0,0,0);
-    shininess = 0.0f;
     emission = glm::vec3(0,0,0);
     ambient = glm::vec3(0,0,0);
 }

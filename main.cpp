@@ -302,17 +302,18 @@ int main(int argc, char** argv) {
     // Initialize Scene and Geometry
     int tempWidth = 800;
     int tempHeight = 800;
-    string outName = "firstTest.png";
+    string outName = "triangleTest.png";
     Scene scene = Scene(tempWidth, tempHeight, 5, outName);
     
-    glm::vec3 testV1 = glm::vec3(1,0,0);
+    glm::vec3 testV1 = glm::vec3(0,-1,1);
     glm::vec3 testV2 = glm::vec3(0,1,0);
-    glm::vec3 testV3 = glm::vec3(0,0,1);
+    glm::vec3 testV3 = glm::vec3(0,-1,-1);
     scene.addTriangle(testV1,testV2,testV3);
+    //scene.objectStack[0]->setAmbient()
 
     // Initialize test camera 
-    glm::vec3 eye_default = glm::vec3(5.0f, 0.0f, 0.0f); 
-    glm::vec3 target_default = glm::vec3(0.0f, 1.0f, 0.0f); 
+    glm::vec3 eye_default = glm::vec3(-5.0f, 0.0f, 0.0f); 
+    glm::vec3 target_default = glm::vec3(0.0f, 0.0f, 0.0f); 
     glm::vec3 up_default = glm::vec3(0.0f, 1.0f, 0.0f); 
     float fov_default = 30.0f; 
     Camera cam(eye_default, target_default, up_default, fov_default, tempHeight, tempWidth); 
@@ -328,7 +329,16 @@ int main(int argc, char** argv) {
     for(int y = 0; y < tempHeight; y++) {
         for(int x = 0; x < tempWidth; x++) {
             Ray ray = cam.RayThruPixel(x, y); 
-            scene.setPixel(x, y, glm::vec3(x,y,0));
+            
+            
+            RayHit intObj = scene.raycast(ray); 
+            // Can access intObj.ray to use for FindColor() 
+            if(intObj.solid == nullptr) {
+                scene.setPixel(x, y, glm::vec3(0,0,0));
+            } else {
+                scene.setPixel(x,y,glm::vec3(0,255,0));
+            }
+            //scene.setPixel(x, y, glm::vec3(x,y,0));
         }
     }
     std::cout << "Fill Complete" <<std::endl;
