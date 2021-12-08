@@ -64,7 +64,6 @@ Ray Camera::RayThruPixel(int i, int j) {
 	// @formula 	d = (aU + bV - W) / |aU + bV - W|  
 	glm::vec3 rayDir = a * p_u + b * p_v - p_a; 
 	rayDir = glm::normalize(rayDir); 
-	rayDir = -1.0f * rayDir;
 
 	// creating Ray 
 	// might need to scale rayDir so Ray intersects with object 

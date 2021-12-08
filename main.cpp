@@ -317,10 +317,11 @@ int main(int argc, char** argv) {
     string outName = "triangleTest.png";
     Scene scene = Scene(tempWidth, tempHeight, 5, outName);
     
-    glm::vec3 testV1 = glm::vec3(1,2,3);
-    glm::vec3 testV2 = glm::vec3(3,2,1);
-    glm::vec3 testV3 = glm::vec3(2,3,1);
+    glm::vec3 testV1 = glm::vec3(0,-1,1);
+    glm::vec3 testV2 = glm::vec3(0,1,0);
+    glm::vec3 testV3 = glm::vec3(0,-1,-1);
     scene.addTriangle(testV1,testV2,testV3);
+    //scene.objectStack[0]->setAmbient()
 
     // Initialize test camera 
     glm::vec3 eye_default = glm::vec3(-5.0f, 0.0f, 0.0f); 
@@ -340,8 +341,12 @@ int main(int argc, char** argv) {
     for(int y = 0; y < tempHeight; y++) {
         for(int x = 0; x < tempWidth; x++) {
             Ray ray = cam.RayThruPixel(x, y); 
-            std::cout<<ray.ori[0]<<","<<ray.ori[1]<<","<<ray.ori[2]<<" "<<ray.dir[0]<<","<<ray.dir[1]<<","<<ray.dir[2]<<endl;
+            //std::cout<<ray.ori[0]<<","<<ray.ori[1]<<","<<ray.ori[2]<<" "<<ray.dir[0]<<","<<ray.dir[1]<<","<<ray.dir[2]<<endl;
+            
             RayHit intObj = scene.raycast(ray); 
+            if(ray.dir[1] < 0.002f && ray.dir[2] < 0.002f && ray.dir[1] > -0.002f && ray.dir[2] > -0.002f) {
+                std::cout<<ray.ori[0]<<","<<ray.ori[1]<<","<<ray.ori[2]<<" "<<ray.dir[0]<<","<<ray.dir[1]<<","<<ray.dir[2]<<endl;
+            }
             // Can access intObj.ray to use for FindColor() 
             if(intObj.solid == nullptr) {
                 scene.setPixel(x, y, glm::vec3(0,0,0));

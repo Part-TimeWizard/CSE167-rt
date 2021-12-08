@@ -64,15 +64,15 @@ RayHit Scene::raycast(Ray ray) {
             continue; 
         }
 
-        glm::vec3 intPos = solid->checkHit(ray); 
+        glm::vec4 intPos = solid->checkHit(ray); 
 
         float secDist = glm::distance(intersection.pos, ray.ori); 
-        float intDist = glm::distance(intPos, ray.ori); 
-        std::cout<<"CheckHit: "<<intPos[0]<<","<<intPos[1]<<","<<intPos[2]<<std::endl;
-
-        if (intPos != zero && (firstHit || secDist > intDist)) {
+        float intDist = glm::distance(glm::vec3(intPos[0],intPos[1],intPos[2]), ray.ori); 
+        //std::cout<<"CheckHit: "<<intPos[0]<<","<<intPos[1]<<","<<intPos[2]<<std::endl;
+        //std::cout<<"CheckHit: "<<intPos[3]<<std::endl;
+        if (intPos[3] == 1 && (firstHit || secDist > intDist)) {
             std::cout<<"Hit"<<std::endl;
-            intersection = RayHit(ray, solid, intPos); 
+            intersection = RayHit(ray, solid, glm::vec3(intPos[0],intPos[1],intPos[2])); 
             firstHit = false; 
         }
     }

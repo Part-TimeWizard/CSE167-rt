@@ -4,20 +4,20 @@
  *  
  */
 #include "Triangle.h"
+#include <iostream>
 
 void Triangle::transform(glm::vec3) {
     return;
 }
 
-glm::vec3 Triangle::checkHit(Ray r) {
+glm::vec4 Triangle::checkHit(Ray r) {
     glm::vec3 p0 = r.ori;
     glm::vec3 d = r.dir;
     
     glm::vec4 a0 = glm::vec4(position[0],1.0f);
     glm::vec4 a1 = glm::vec4(position[1],1.0f);
     glm::vec4 a2 = glm::vec4(position[2],1.0f);
-    glm::vec4 a3 = glm::vec4(d,0.0f);
-    a3 = -1.0f * a3;
+    glm::vec4 a3 = glm::vec4(-1.0f *d,0.0f);
     glm::mat4 a;
     a[0] = a0;
     a[1] = a1;
@@ -28,9 +28,17 @@ glm::vec3 Triangle::checkHit(Ray r) {
 
     glm::vec4 lambdaVec = aInv * b;
 
+    if (lambdaVec[0] >= 0 && lambdaVec[1] >= 0 && lambdaVec[2] >= 0){
+        std::cout<<lambdaVec[0]<<","<<lambdaVec[1]<<","<<lambdaVec[2]<<lambdaVec[3]<<std::endl;
+        std::cout<<a3[0]<<","<<a3[1]<<","<<a3[2]<<","<<a3[3]<<std::endl;
+        std::cout<<std::endl;
+    }
+    
+    glm::vec3 q = lambdaVec[0]*position[0] + lambdaVec[1]*position[1] + lambdaVec[2]*position[2];
+
     if(lambdaVec[0] >= 0 && lambdaVec[1] >= 0 && lambdaVec[2] >= 0 && lambdaVec[3] >= 0) {
-        return getAmbient();
+        return glm::vec4(q,1); // 1 means intersect
     } else {
-        return glm::vec3(0,0,0);
+        return glm::vec4(q,0); // 0 means no intersect
     }
 }
