@@ -16,7 +16,7 @@ class Primitive {
         glm::vec3 ambient;
 
     public:
-        virtual void checkHit(glm::vec3);
+        virtual glm::vec3 checkHit(glm::vec3, glm::vec3);
         virtual void transform(glm::vec3); // Used to apply transformations to the Primitive, applied in reverse to popTransforms
 
         void setDiffuse(glm::vec3 d){ diffuse = d; };
