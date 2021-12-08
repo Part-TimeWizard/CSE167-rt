@@ -5,8 +5,8 @@ LDFLAGS = -framework GLUT -framework OpenGL -L./lib/mac/ -lm  -lfreeimage
 
 RM = /bin/rm -f
 all: RayTracer
-RayTracer: main.o Camera.o Light.o Ray.o RayHit.o Scene.o Sphere.o Triangle.o
-	$(CC) -o RayTracer main.o Camera.o Light.o Ray.o RayHit.o Scene.o Sphere.o Triangle.o $(LDFLAGS)
+RayTracer: main.o Camera.o Light.o Ray.o RayHit.o Scene.o Primitive.o Sphere.o Triangle.o
+	$(CC) -o RayTracer main.o Camera.o Light.o Ray.o RayHit.o Scene.o Primitive.o Sphere.o Triangle.o $(LDFLAGS)
 ImageLibraryTest: main.o Scene.o
 	$(CC) -o ImageLibraryTest main.o Scene.o $(LDFLAGS)
 main.o: main.cpp
@@ -21,6 +21,8 @@ RayHit.o: src/RayHit.cpp include/RayHit.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c src/RayHit.cpp
 Scene.o: src/Scene.cpp include/Scene.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c src/Scene.cpp
+Primitive.o: src/models/Primitive.cpp include/Primitive.h
+	$(CC) $(CFLAGS) $(INCFLAGS) -c src/models/Primitive.cpp
 Sphere.o: src/models/Sphere.cpp include/Sphere.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c src/models/Sphere.cpp
 Triangle.o: src/models/Triangle.cpp include/Triangle.h

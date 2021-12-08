@@ -16,8 +16,10 @@ class Primitive {
         glm::vec3 ambient;
 
     public:
-        virtual glm::vec3 checkHit(glm::vec3, glm::vec3);
-        virtual void transform(glm::vec3); // Used to apply transformations to the Primitive, applied in reverse to popTransforms
+        Primitive();
+
+        virtual glm::vec3 checkHit(glm::vec3, glm::vec3){return glm::vec3(0,0,0);};
+        virtual void transform(glm::vec3){}; // Used to apply transformations to the Primitive, applied in reverse to popTransforms
 
         void setDiffuse(glm::vec3 d){ diffuse = d; };
         void setSpecular(glm::vec3 s){ specular = s; };
