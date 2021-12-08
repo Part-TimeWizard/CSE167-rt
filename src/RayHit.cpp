@@ -7,29 +7,9 @@
 RayHit::RayHit() {}
 RayHit::~RayHit() {} 
 
-RayHit::RayHit (Ray ray, Primitive solid, glm::vec3 point) {
+RayHit::RayHit (Ray ray, Primitive intSolid, glm::vec3 intPoint) {
     ray = ray;
-    solid = solid;
-    h_pos = point;
-    normal = glm::normalize(point);
-}
-
-/*
-** Methods 
-*/
-
-Ray RayHit::getRay() {
-    return ray;
-}
-
-Primitive RayHit::getPrim() {
-    return solid;
-}
-
-glm::vec3 RayHit::getPos() {
-    return h_pos;
-}
-
-glm::vec3 RayHit::getNorm() {
-    return normal;
+    solid = intSolid;
+    pos = intPoint;
+    normal = glm::normalize(intPoint);
 }

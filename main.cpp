@@ -53,6 +53,7 @@
 using namespace std;
 #include "main.h"
 #include "include/Scene.h"
+#include "Camera.h"
 
 // The function below applies the appropriate transform to a 4-vector
 void matransform(stack<glm::mat4> &transfstack, GLfloat* values)
