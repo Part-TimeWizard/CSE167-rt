@@ -27,21 +27,22 @@ const glm::vec3 normal, float fov, int height, int width) {
  */
 void Camera::computeProjection() { 
 	// 1) Compute vector from camera position to target position 
-	p_a = target - eye; 
+	p_a = eye - target; 
 	p_a = glm::normalize(p_a); 
 
 	// 2) Compute U and V vectors
-	p_u = glm::cross(p_a, up); 
+	p_u = glm::cross(up, p_a); 
 	p_u = glm::normalize(p_u); 
-	p_v = glm::cross(p_u, p_a); 
-	p_v = glm::normalize(p_v); 
+	p_v = glm::cross(p_a, p_u); 
 
 	// 3) Compute position of the center point of the screen 
-	p_c = eye + p_a; 
+	p_c = eye - p_a; 
 
 	// 4) Modify U and V vectors to match size and aspect ratio 
+	/*
 	p_u = p_u * fovx; 
 	p_v = p_v * (fovx / fovy); 
+	*/ 
 }
 
 /**
