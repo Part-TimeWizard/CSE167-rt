@@ -23,21 +23,14 @@ void Scene::setPixel(int x, int y, glm::vec3 color) {
     pixelData[convertedIdx + 2] = color[2];
 }
 
-void Scene::pushTransform() {
-
-}
-
-void Scene::popTransform() {
-
-}
-
-void Scene::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3) {
-    Triangle* newTri = new Triangle(v1, v2, v3);
+void Scene::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh) {
+    Triangle* newTri = new Triangle(v1, v2, v3, a, sp, d, e, sh);
     objectStack.push_back(newTri);
+    std::cout<<"Triangle Created: "<<newTri<<"="<<objectStack[objectStack.size()-1]<<std::endl;
 }
 
-void Scene::addSphere(glm::vec3 p, float r) {
-    Sphere* newSphere = new Sphere(p, r);
+void Scene::addSphere(glm::vec3 p, float r, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh) {
+    Sphere* newSphere = new Sphere(p, r, a, sp, d, e, sh);
     objectStack.push_back(newSphere);
 }
 
@@ -59,7 +52,7 @@ RayHit Scene::raycast(Ray ray) {
         }
 
         glm::vec4 intPos = solid->checkHit(ray); 
-
+        
         float secDist = glm::distance(intersection.pos, ray.ori); 
         float intDist = glm::distance(glm::vec3(intPos[0],intPos[1],intPos[2]), ray.ori); 
         

@@ -20,6 +20,8 @@ const glm::vec3 normal, float fov, int height, int width) {
 	// Assign appropriate world aspect ratio 
 	fovy = glm::tan(fov / 2); 
 	fovx = aspr * glm::tan(fov / 2); 
+
+	computeProjection();
 }
 
 /**

@@ -51,7 +51,7 @@
 #endif
 
 using namespace std;
-#include "main.h"
+//#include "main.h"
 #include "include/Scene.h"
 #include "include/Camera.h"
 
@@ -83,25 +83,30 @@ bool readvals(stringstream &s, const int numvals, GLfloat* values)
     return true;
 }
 
-void readfile(const char* filename)
+Scene* readfile(const char* filename)
 {
     string str, cmd;
     ifstream in;
-
-    // YOUR CODE HERE
-    // We define some variables here as guides.  You will need to either include this function in some sort of class
-    // to get access to them or define the variables globally.
 
     int numused = 0;
     const int numLights = 10; // max 10 point lights.  You can increase this if you want to add more lights.
     float lightposn[3 * numLights]; // Point light Positions
     float lightcolor[3 * numLights]; // Point light Colors
 
-    float ambient[3];
+    /*float ambient[3];
     float diffuse[3];
     float specular[3];
-    float emission[3];
-    float shininess;
+    float emission[3];*/
+    glm::vec3 ambient = glm::vec3(0,0,0);
+    glm::vec3 diffuse = glm::vec3(0,0,0);
+    glm::vec3 specular = glm::vec3(0,0,0);
+    glm::vec3 emission = glm::vec3(0,0,0);
+    float shininess = 0.0f;
+
+    int maxVerts = 0;
+    vector<glm::vec3> vertexList;
+
+    Scene* scene = nullptr;
 
     in.open(filename);
     if (in.is_open()) {
@@ -151,7 +156,9 @@ void readfile(const char* filename)
 
                 else if (cmd == "ambient") {
                     validinput = readvals(s, 3, values); // colors
-                    // YOUR CODE HERE
+                    if (validinput) {
+                        ambient = glm::vec3(values[0],values[1],values[2]);
+                    }
 
                 }
                 // Material Commands
@@ -161,23 +168,26 @@ void readfile(const char* filename)
                   else if (cmd == "diffuse") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-                        for (i = 0; i < 3; i++) {
+                        /*for (i = 0; i < 3; i++) {
                             diffuse[i] = values[i];
-                        }
+                        }*/
+                        diffuse = glm::vec3(values[0],values[1],values[2]);
                     }
                 } else if (cmd == "specular") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-                        for (i = 0; i < 3; i++) {
+                        /*for (i = 0; i < 3; i++) {
                             specular[i] = values[i];
-                        }
+                        }*/
+                        specular = glm::vec3(values[0],values[1],values[2]);
                     }
                 } else if (cmd == "emission") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-                        for (i = 0; i < 3; i++) {
+                        /*for (i = 0; i < 3; i++) {
                             emission[i] = values[i];
-                        }
+                        }*/
+                        emission = glm::vec3(values[0],values[1],values[2]);
                     }
                 } else if (cmd == "shininess") {
                     validinput = readvals(s, 1, values);
@@ -190,25 +200,34 @@ void readfile(const char* filename)
                         // YOUR CODE HERE
                         // This the the image size, as width, height.
                         // Get these values and store them for use with your raytracer.
+                        std::cout<<"Generating Scene..."<<std::endl;
+                        scene = new Scene(values[0],values[1]);
                     }
 
                 }
                 else if (cmd == "maxdepth") {
                     validinput = readvals(s, 1, values);
-                    // YOUR CODE HERE
+                    scene->setDepth(values[0]);
                 }
                 else if (cmd == "output") {
-                    validinput = readvals(s, 1, values);
-                    // YOUR CODE HERE
+                    string outName;
+                    s >> outName;
+                    scene->setName(outName);
                 }
                 else if (cmd == "camera") {
                     validinput = readvals(s,10,values); // 10 values eye cen up fov
                     if (validinput) {
-                        
-                        // YOUR CODE HERE
-                        // You'll need to read these values and use them for your own
-                        // camera implementation.  Keep in mind for the raytracer the camera will be static.
-                        
+                        // May need to mult by transform stack
+                        glm::vec3 eye = glm::vec3(values[0],values[1],values[2]);
+                        glm::vec3 target = glm::vec3(values[3],values[4],values[5]);
+                        glm::vec3 up = glm::vec3(values[6],values[7],values[8]);
+                        float fov = values[9];
+                        std::cout << "Generating Camera..."<<std::endl;
+                        for (int i = 0; i < 10; i++){
+                            std::cout<< values[i]<< " ";
+                        }
+                        std::cout<<"\n";
+                        scene->camera = new Camera(eye, target, up, fov, scene->imageHeight, scene->imageWidth);
                     }
                  }
                               
@@ -217,11 +236,7 @@ void readfile(const char* filename)
                     if (validinput) {
                         
                         glm::mat4 translateMatrix; 
-
-                        // YOUR CODE HERE
-                        // Implement a translation matrix.  You can just use glm built in functions
-                        // if you want.
-                      
+                        translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(values[0],values[1],values[2]));
                         rightmultiply(translateMatrix, transfstack);
                     }
                 }
@@ -230,11 +245,7 @@ void readfile(const char* filename)
                     if (validinput) {
                         
                         glm::mat4 scaleMatrix;
-
-                        // YOUR CODE HERE
-                        // Implement a scale matrix.  You can just use glm built in functions
-                        // if you want.
-
+                        scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(values[0],values[1],values[2]));
                         rightmultiply(scaleMatrix, transfstack);
                     }
                 }
@@ -244,19 +255,14 @@ void readfile(const char* filename)
                         
                         glm::vec3 axis = glm::normalize(glm::vec3(values[0], values[1], values[2]));
                         glm::mat4 rotateMatrix;
-
-                        // YOUR CODE HERE
-                        // Implement a rotation matrix.  You can just use glm built in functions
-                        // if you want.
-
-                        rightmultiply(rotateMatrix, transfstack);
-                        
+                        rotateMatrix = glm::rotate(glm::mat4(1.0f),values[3],axis);
+                        rightmultiply(rotateMatrix, transfstack);   
                     }
                 }
 
                 else if (cmd == "maxverts") {
                     validinput = readvals(s, 1, values);
-                    // YOUR CODE HERE
+                    maxVerts = values[0];
                 }
                 else if (cmd == "sphere") {
                     validinput = readvals(s, 4, values);
@@ -264,11 +270,24 @@ void readfile(const char* filename)
                 }
                 else if (cmd == "tri") {
                     validinput = readvals(s, 3, values);
-                    // YOUR CODE HERE
+                    // Make new obj, right mult by transfstack
+                    glm::vec3 v1 = vertexList[values[0]];
+                    glm::vec3 v2 = vertexList[values[1]];
+                    glm::vec3 v3 = vertexList[values[2]];
+                    glm::mat4 T = transfstack.top();
+                    v1 = glm::vec3(T * glm::vec4(v1,1));
+                    v2 = glm::vec3(T * glm::vec4(v2,1));
+                    v3 = glm::vec3(T * glm::vec4(v3,1));
+                    std::cout<<"Creating Triangle ("<<v1[0]<<","<<v1[1]<<","<<v1[2]<<v2[0]<<","<<v2[1]<<","<<v2[2]<<v3[0]<<","<<v3[1]<<","<<v3[2]<<")"<<std::endl;
+                    scene->addTriangle(v1,v2,v3,ambient,specular,diffuse,emission,shininess);
                 }
                 else if (cmd == "vertex") {
                     validinput = readvals(s, 3, values);
-                    // YOUR CODE HERE
+                    if (vertexList.size() < maxVerts){
+                        vertexList.push_back(glm::vec3(values[0],values[1],values[2]));
+                    } else {
+                        cerr << "Max vertices reach, unable to add more\n";
+                    }
                 }
 
 
@@ -296,6 +315,7 @@ void readfile(const char* filename)
         cerr << "Unable to Open Input Data File " << filename << "\n";
         throw 2;
     }
+    return scene;
 }
 
 void saveimg(std::vector<BYTE> pixels, int width, int height, const char* filename) {
@@ -311,26 +331,8 @@ void saveimg(std::vector<BYTE> pixels, int width, int height, const char* filena
 
 int main(int argc, char** argv) {
     
-    // Initialize Scene and Geometry
-    int tempWidth = 800;
-    int tempHeight = 800;
-    string outName = "triangleTest.png";
-    Scene scene = Scene(tempWidth, tempHeight, 5, outName);
+    Scene* scene = readfile(argv[1]);
     
-    glm::vec3 testV1 = glm::vec3(0,-1,1);
-    glm::vec3 testV2 = glm::vec3(0,1,0);
-    glm::vec3 testV3 = glm::vec3(0,-1,-1);
-    scene.addTriangle(testV1,testV2,testV3);
-    //scene.objectStack[0]->setAmbient()
-
-    // Initialize test camera 
-    glm::vec3 eye_default = glm::vec3(-5.0f, 0.0f, 0.0f); 
-    glm::vec3 target_default = glm::vec3(0.0f, 0.0f, 0.0f); 
-    glm::vec3 up_default = glm::vec3(0.0f, 1.0f, 0.0f); 
-    float fov_default = 30.0f; 
-    Camera cam(eye_default, target_default, up_default, fov_default, tempHeight, tempWidth); 
-    cam.computeProjection(); 
-
     // Find the colors for each pixel
     std::cout << "Beginning fill" <<std::endl;
     /*
@@ -338,17 +340,16 @@ int main(int argc, char** argv) {
         scene.pixelData.push_back(static_cast<BYTE>(i));
     }
     */
-    for(int y = 0; y < tempHeight; y++) {
-        for(int x = 0; x < tempWidth; x++) {
-            Ray ray = cam.RayThruPixel(x, y); 
+    for(int y = 0; y < scene->imageHeight; y++) {
+        for(int x = 0; x < scene->imageWidth; x++) {
+            Ray ray = scene->camera->RayThruPixel(x, y); 
             
-            
-            RayHit intObj = scene.raycast(ray); 
+            RayHit intObj = scene->raycast(ray); 
             // Can access intObj.ray to use for FindColor() 
             if(intObj.solid == nullptr) {
-                scene.setPixel(x, y, glm::vec3(0,0,0));
+                scene->setPixel(x, y, glm::vec3(0,0,0));
             } else {
-                scene.setPixel(x,y,glm::vec3(0,255,0));
+                scene->setPixel(x,y,glm::vec3(0,255,0));
             }
             //scene.setPixel(x, y, glm::vec3(x,y,0));
         }
@@ -357,7 +358,7 @@ int main(int argc, char** argv) {
 
     // Export Image
     FreeImage_Initialise();
-    saveimg(scene.pixelData, tempWidth, tempHeight, outName.c_str());
+    saveimg(scene->pixelData, scene->imageWidth, scene->imageHeight, scene->outFileName.c_str());
     FreeImage_DeInitialise();
 
     // Deinitialize all the objects?

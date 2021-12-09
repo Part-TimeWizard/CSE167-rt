@@ -9,7 +9,8 @@
 class Sphere : public Primitive {
 
     public:
-        Sphere(glm::vec3 p, float r){ position = p; radius = r; };
+        Sphere(glm::vec3 p, float r, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh)
+            : Primitive(a,sp,d,e,sh){ position = p; radius = r; };
         void transform(glm::vec3); 
         glm::vec4 checkHit(Ray r);
 

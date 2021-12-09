@@ -9,6 +9,7 @@
 #include "Sphere.h"
 #include "Ray.h"
 #include "RayHit.h" 
+#include "Camera.h"
 #include "Light.h"
 
 #include <glm/glm.hpp>
@@ -17,6 +18,7 @@
 #include <string>
 #include <algorithm> 
 #include <iostream> 
+#include <stack>
 #include <typeinfo> 
 #include <FreeImage.h>
 #include <math.h> 
@@ -36,11 +38,11 @@ class Scene {
         glm::vec3 attenuation; 
         std::string outFileName;
         std::vector<Primitive*> objectStack; // Used to iterate thru and checkHit of all primitives
+        std::stack<glm::mat4> transformStack;
+        Camera* camera;
 
-        void pushTransform();
-        void popTransform();
-        void addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3);
-        void addSphere(glm::vec3 p, float r);
+        void addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh);
+        void addSphere(glm::vec3 p, float r, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh);
         void setDepth(int d){maxDepth = d;};
         void setName(std::string n){outFileName = n;};
         void setPixel(int x, int y, glm::vec3 color);
@@ -49,13 +51,14 @@ class Scene {
         glm::vec3 findColor(RayHit ray, std::vector<Light*> lights); 
 
     private:
+        /*
         enum class TransformType {Translate, Rotate, Scale};
         struct Transforms {
             TransformType transformType;
             glm::vec3 transformVector;
             float transformAngle;
         };
+        */
 
-        std::vector<Transforms> transformStack;
 
 };
