@@ -90,17 +90,17 @@ Scene* readfile(const char* filename)
 
     int numused = 0;
     const int numLights = 10; // max 10 point lights.  You can increase this if you want to add more lights.
-    float lightposn[3 * numLights]; // Point light Positions
-    float lightcolor[3 * numLights]; // Point light Colors
+    //float lightposn[3 * numLights]; // Point light Positions
+    //float lightcolor[3 * numLights]; // Point light Colors
 
     /*float ambient[3];
     float diffuse[3];
     float specular[3];
     float emission[3];*/
-    glm::vec3 ambient = glm::vec3(0,0,0);
-    glm::vec3 diffuse = glm::vec3(0,0,0);
-    glm::vec3 specular = glm::vec3(0,0,0);
-    glm::vec3 emission = glm::vec3(0,0,0);
+    glm::vec3 ambient = glm::vec3(0.2f,0.2f,0.2f);
+    glm::vec3 diffuse = glm::vec3(0.0f,0.0f,0.0f);
+    glm::vec3 specular = glm::vec3(0.0f,0.0f,0.0f);
+    glm::vec3 emission = glm::vec3(0.0f,0.0f,0.0f);
     float shininess = 0.0f;
 
     int maxVerts = 0;
@@ -136,22 +136,27 @@ Scene* readfile(const char* filename)
                     } else {
                         validinput = readvals(s, 6, values); // Position/color for lts.
                         if (validinput) {
-                            
-                            for(int i = 0; i < 3; i++){
-                                lightposn[numused*3 + i] = values[i];
-                                lightcolor[numused*3 + i] = values[i + 3];
-                            }
+                            glm::vec3 v = glm::vec3(values[0],values[1],values[2]);
+                            glm::vec3 c = glm::vec3(values[3],values[4],values[5]);
+                            scene->addLight(v,c,0);
                             ++numused;
                         }
                     }
                 }
                 else if (cmd == "directional") {
-                    // YOUR CODE HERE.  You can use point lights as an example, or 
-                    // implement both your own way.
+                    validinput = readvals(s, 6, values); // Position/color for lts.
+                        if (validinput) {
+                            glm::vec3 v = glm::vec3(values[0],values[1],values[2]);
+                            glm::vec3 c = glm::vec3(values[3],values[4],values[5]);
+                            scene->addLight(v,c,1);
+                            ++numused;
+                        }
                 }
                 else if (cmd == "attenuation") {
-                    // YOUR CODE HERE.
-       
+                    validinput = readvals(s, 3, values); // colors
+                    if (validinput) {
+                        scene->attenuation = glm::vec3(values[0],values[1],values[2]);
+                    }
                 }
 
                 else if (cmd == "ambient") {
@@ -266,7 +271,9 @@ Scene* readfile(const char* filename)
                 }
                 else if (cmd == "sphere") {
                     validinput = readvals(s, 4, values);
-                    // YOUR CODE HERE
+                    glm::vec3 p = glm::vec3(values[0],values[1],values[2]);
+                    //maybe transform p by t
+                    //scene->addSphere(p, values[3], transfstack.top(),ambient,specular,diffuse,emission,shininess);
                 }
                 else if (cmd == "tri") {
                     validinput = readvals(s, 3, values);
@@ -340,6 +347,7 @@ int main(int argc, char** argv) {
         scene.pixelData.push_back(static_cast<BYTE>(i));
     }
     */
+   /*
     for(int y = 0; y < scene->imageHeight; y++) {
         for(int x = 0; x < scene->imageWidth; x++) {
             Ray ray = scene->camera->RayThruPixel(x, y); 
@@ -353,7 +361,8 @@ int main(int argc, char** argv) {
             }
             //scene.setPixel(x, y, glm::vec3(x,y,0));
         }
-    }
+    }*/
+    scene->render();
     std::cout << "Fill Complete" <<std::endl;
 
     // Export Image
