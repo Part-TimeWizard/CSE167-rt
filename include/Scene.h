@@ -50,7 +50,7 @@ class Scene {
         void setPixel(int x, int y, glm::vec3 color);
         RayHit raycast(Ray ray); 
         bool isVisible(Ray ray);
-        glm::vec3 findColor(RayHit ray); 
+        glm::vec3 findColor(RayHit ray, int maxDepth); 
         void render();
 
     private:
