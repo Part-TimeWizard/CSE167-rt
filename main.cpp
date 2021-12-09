@@ -83,7 +83,7 @@ bool readvals(stringstream &s, const int numvals, GLfloat* values)
     return true;
 }
 
-void readfile(const char* filename, Scene &scene)
+void readfile(const char* filename, Scene* scene)
 {
     string str, cmd;
     ifstream in;
@@ -93,11 +93,15 @@ void readfile(const char* filename, Scene &scene)
     float lightposn[3 * numLights]; // Point light Positions
     float lightcolor[3 * numLights]; // Point light Colors
 
-    float ambient[3];
+    /*float ambient[3];
     float diffuse[3];
     float specular[3];
-    float emission[3];
-    float shininess;
+    float emission[3];*/
+    glm::vec3 ambient = glm::vec3(0,0,0);
+    glm::vec3 diffuse = glm::vec3(0,0,0);
+    glm::vec3 specular = glm::vec3(0,0,0);
+    glm::vec3 emission = glm::vec3(0,0,0);
+    float shininess = 0.0f;
 
     int maxVerts = 0;
     vector<glm::vec3> vertexList;
@@ -150,7 +154,9 @@ void readfile(const char* filename, Scene &scene)
 
                 else if (cmd == "ambient") {
                     validinput = readvals(s, 3, values); // colors
-                    // YOUR CODE HERE
+                    if (validinput) {
+                        ambient = glm::vec3(values[0],values[1],values[2]);
+                    }
 
                 }
                 // Material Commands
@@ -160,23 +166,26 @@ void readfile(const char* filename, Scene &scene)
                   else if (cmd == "diffuse") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-                        for (i = 0; i < 3; i++) {
+                        /*for (i = 0; i < 3; i++) {
                             diffuse[i] = values[i];
-                        }
+                        }*/
+                        diffuse = glm::vec3(values[0],values[1],values[2]);
                     }
                 } else if (cmd == "specular") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-                        for (i = 0; i < 3; i++) {
+                        /*for (i = 0; i < 3; i++) {
                             specular[i] = values[i];
-                        }
+                        }*/
+                        specular = glm::vec3(values[0],values[1],values[2]);
                     }
                 } else if (cmd == "emission") {
                     validinput = readvals(s, 3, values);
                     if (validinput) {
-                        for (i = 0; i < 3; i++) {
+                        /*for (i = 0; i < 3; i++) {
                             emission[i] = values[i];
-                        }
+                        }*/
+                        emission = glm::vec3(values[0],values[1],values[2]);
                     }
                 } else if (cmd == "shininess") {
                     validinput = readvals(s, 1, values);
@@ -189,26 +198,27 @@ void readfile(const char* filename, Scene &scene)
                         // YOUR CODE HERE
                         // This the the image size, as width, height.
                         // Get these values and store them for use with your raytracer.
-                        scene = new Scene(validinput[0],validinput[1]);
+                        scene = new Scene(values[0],values[1]);
                     }
 
                 }
                 else if (cmd == "maxdepth") {
                     validinput = readvals(s, 1, values);
-                    scene.setDepth(validinput[0]);
+                    scene->setDepth(values[0]);
                 }
                 else if (cmd == "output") {
-                    validinput = readvals(s, 1, values);
-                    scene.setName(validinput[0]);
+                    string outName;
+                    s >> outName;
+                    scene->setName(outName);
                 }
                 else if (cmd == "camera") {
                     validinput = readvals(s,10,values); // 10 values eye cen up fov
                     if (validinput) {
-                        glm::vec3 eye = glm::vec3(validinput[0],validinput[1],validinput[2]);
-                        glm::vec3 target = glm::vec3(validinput[3],validinput[4],validinput[5]);
-                        glm::vec3 up = glm::vec3(validinput[6],validinput[7],validinput[8]);
-                        float fov = validinput[9];
-                        scene.camera = new Camera(eye_default, target_default, up_default, fov_default, scene.imageHeight, scene.imageWidth);
+                        glm::vec3 eye = glm::vec3(values[0],values[1],values[2]);
+                        glm::vec3 target = glm::vec3(values[3],values[4],values[5]);
+                        glm::vec3 up = glm::vec3(values[6],values[7],values[8]);
+                        float fov = values[9];
+                        scene->camera = new Camera(eye, target, up, fov, scene->imageHeight, scene->imageWidth);
                     }
                  }
                               
@@ -217,7 +227,7 @@ void readfile(const char* filename, Scene &scene)
                     if (validinput) {
                         
                         glm::mat4 translateMatrix; 
-                        translateMatrix = glm::translate(glm::mat4(), glm::vec3(values[0],values[1],values[2]));
+                        translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(values[0],values[1],values[2]));
                         rightmultiply(translateMatrix, transfstack);
                     }
                 }
@@ -226,7 +236,7 @@ void readfile(const char* filename, Scene &scene)
                     if (validinput) {
                         
                         glm::mat4 scaleMatrix;
-                        scaleMatrix = glm::scale(values[0],values[1],values[2]);
+                        scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(values[0],values[1],values[2]));
                         rightmultiply(scaleMatrix, transfstack);
                     }
                 }
@@ -236,14 +246,14 @@ void readfile(const char* filename, Scene &scene)
                         
                         glm::vec3 axis = glm::normalize(glm::vec3(values[0], values[1], values[2]));
                         glm::mat4 rotateMatrix;
-                        rotateMatrix = glm::rotate(values[3],axis);
+                        rotateMatrix = glm::rotate(glm::mat4(1.0f),values[3],axis);
                         rightmultiply(rotateMatrix, transfstack);   
                     }
                 }
 
                 else if (cmd == "maxverts") {
                     validinput = readvals(s, 1, values);
-                    maxVerts = validinput[0];
+                    maxVerts = values[0];
                 }
                 else if (cmd == "sphere") {
                     validinput = readvals(s, 4, values);
@@ -252,19 +262,19 @@ void readfile(const char* filename, Scene &scene)
                 else if (cmd == "tri") {
                     validinput = readvals(s, 3, values);
                     // Make new obj, right mult by transfstack
-                    glm::vec3 v1 = vertexList[validinput[0]];
-                    glm::vec3 v2 = vertexList[validinput[1]];
-                    glm::vec3 v3 = vertexList[validinput[2]];
+                    glm::vec3 v1 = vertexList[values[0]];
+                    glm::vec3 v2 = vertexList[values[1]];
+                    glm::vec3 v3 = vertexList[values[2]];
                     glm::mat4 T = transfstack.top();
-                    v1 = T * v1;
-                    v2 = T * v2;
-                    v3 = T * v3;
-                    scene.addTriangle(v1,v2,v3);
+                    v1 = glm::vec3(T * glm::vec4(v1,1));
+                    v2 = glm::vec3(T * glm::vec4(v2,1));
+                    v3 = glm::vec3(T * glm::vec4(v3,1));
+                    scene->addTriangle(v1,v2,v3,ambient,specular,diffuse,emission,shininess);
                 }
                 else if (cmd == "vertex") {
                     validinput = readvals(s, 3, values);
                     if (vertexList.size() < maxVerts){
-                        vertexList.push_back(glm::vec3(validinput[0],validinput[1],validinput[2]));
+                        vertexList.push_back(glm::vec3(values[0],values[1],values[2]));
                     } else {
                         cerr << "Max vertices reach, unable to add more\n";
                     }
@@ -319,7 +329,7 @@ int main(int argc, char** argv) {
     glm::vec3 testV1 = glm::vec3(0,-1,1);
     glm::vec3 testV2 = glm::vec3(0,1,0);
     glm::vec3 testV3 = glm::vec3(0,-1,-1);
-    scene.addTriangle(testV1,testV2,testV3);
+    scene.addTriangle(testV1,testV2,testV3,glm::vec3(0,255,0),glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(0,0,0),0.0f);
     //scene.objectStack[0]->setAmbient()
 
     // Initialize test camera 

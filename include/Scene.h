@@ -33,10 +33,10 @@ class Scene {
         std::string outFileName;
         std::vector<Primitive*> objectStack; // Used to iterate thru and checkHit of all primitives
         std::stack<glm::mat4> transformStack;
-        Camera::Camera camera;
+        Camera* camera;
 
-        void addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3);
-        void addSphere(glm::vec3 p, float r);
+        void addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh);
+        void addSphere(glm::vec3 p, float r, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh);
         void setDepth(int d){maxDepth = d;};
         void setName(std::string n){outFileName = n;};
         void setPixel(int x, int y, glm::vec3 color);
