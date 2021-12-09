@@ -10,11 +10,14 @@
 #include "Ray.h"
 #include "RayHit.h" 
 #include "Camera.h"
+#include "Light.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <string>
 #include <stack>
+#include <typeinfo> 
 #include <FreeImage.h>
 
 #pragma once
@@ -41,6 +44,9 @@ class Scene {
         void setName(std::string n){outFileName = n;};
         void setPixel(int x, int y, glm::vec3 color);
         RayHit raycast(Ray ray); 
+        bool isVisible(Ray ray);
+        glm::vec3 static findColor(RayHit* ray, vector<Light*> lights); 
+        glm::vec3 static findColor(Ray ray); 
 
     private:
         /*
