@@ -1,8 +1,3 @@
-/**
- *  Scene.cpp
- * 
- * 
- */
 #include "Scene.h"
 #include <iostream>
 
@@ -76,4 +71,66 @@ RayHit Scene::raycast(Ray ray) {
         }
     }
     return intersection; 
+}
+
+bool Scene::isVisible(Ray ray) {
+    for (Primitive* solid : objectStack) {
+        if (solid == nullptr) {
+            continue; 
+        }
+        glm::vec4 intPos = solid->checkHit(ray); 
+        if (intPos[3] == 1) 
+            return true; 
+    }
+    return false; 
+}
+
+glm::vec3 static Scene::findColor(RayHit* hray, vector<Light*> lights) {
+  
+    glm::vec3 finalColor; 
+
+    // get material values for the first solid hit 
+    if (hray->solid != nullptr) {
+        glm::vec3 a = hray->solid->getAmbient(); 
+        glm::vec3 e = hray->solid->getEmission();
+        glm::vec3 d = hray->solid->getDiffuse(); 
+        glm::vec3 s = hray->solid->getSpecular();
+        float    sh = hray->solid->getShininess(); 
+    }
+
+    // iterate for each light 
+    for (auto light : lights) {
+        int vi; 
+        Ray shadowRay;                                  // shadow ray for vi 
+        glm::vec3 halfa;                                // half angle between viewdirection & light 
+        glm::vec3 dsSum;                                // summation of diffuse & specular 
+        glm::vec3 ldir = (light->pos) - (hray->pos);     // direction vector to light 
+
+        // case for point light
+        // attenuation is considered 
+        if (typeid(light) == typeid(PointLight)) {
+
+            // determine vi for point light 
+            shadowRay = new Ray(hray->pos, glm::normalize(light->pos - hray->pos)); 
+            if (scene.isVisible(shadowRay)) { vi = 1; } 
+            else { vi = 0; }
+
+            halfa = glm::normalize(ldir - hray->ray->dir);    // determine half angle for point light 
+
+            dsSum += vi * light->colorAt(hray->pos) * (d * max(glm::dot(hray->normal, ldir), 0) + s * (max(glm::dot(hray->normal, halfa), 0))^sh); 
+        }
+
+        // case for directional light 
+        else {
+
+            // determine vi for directional light 
+            shadowRay = new Ray(ray->pos, light->dir); 
+            if (scene.isVisible(shadowRay)) { vi = 1; }
+            else { vi = 0; }
+
+            halfa = glm::normalize(ldir - hray->ray->dir); 
+            dsSum += vi * light->color * (d * max(glm::dot(hray->normal, ldir), 0) + s * (max(glm::dot(hray->normal, halfa), 0))^sh);
+        }
+    }
+    finalColor = a + e + dsSum;
 }

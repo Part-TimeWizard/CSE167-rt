@@ -7,9 +7,9 @@
 RayHit::RayHit() {}
 RayHit::~RayHit() {} 
 
-RayHit::RayHit (Ray ray, Primitive* intSolid, glm::vec3 intPoint) {
-    ray = ray;
-    solid = intSolid;
-    pos = intPoint;
-    normal = glm::normalize(intPoint);
+RayHit::RayHit(Ray* m_ray, Primitive* intSolid, glm::vec3 intPoint) {
+    ray = m_ray;                         // ray that hit 
+    solid = intSolid;                   // solid hit by ray 
+    pos = intPoint;                     // point of intersection 
+    normal = glm::normalize(intPoint);  // surface normal 
 }
