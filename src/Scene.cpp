@@ -58,8 +58,7 @@ RayHit Scene::raycast(Ray ray) {
         }
 
         glm::vec4 intPos = solid->checkHit(ray); 
-        std::cout<<"Origin: "<< ray.ori[0]<<","<<ray.ori[1]<<","<<ray.ori[2]<<" " <<ray.dir[0]<<","<<ray.dir[1]<<","<<ray.dir[2]<<"\n";
-
+        
         float secDist = glm::distance(intersection.pos, ray.ori); 
         float intDist = glm::distance(glm::vec3(intPos[0],intPos[1],intPos[2]), ray.ori); 
         

@@ -331,24 +331,7 @@ void saveimg(std::vector<BYTE> pixels, int width, int height, const char* filena
 
 int main(int argc, char** argv) {
     
-    //Scene* scene = readfile(argv[1]);
-
-
-
-    int tempWidth = 800;
-    int tempHeight = 800;
-    string outName = "outFile.png";
-    Scene* scene = new Scene(tempWidth, tempHeight, 5, outName);
-    glm::vec3 eye_default = glm::vec3(-5.0f, 0.0f, 0.0f); 
-    glm::vec3 target_default = glm::vec3(0.0f, 0.0f, 0.0f); 
-    glm::vec3 up_default = glm::vec3(0.0f, 1.0f, 0.0f); 
-    float fov_default = 30.0f; 
-    scene -> camera = new Camera(eye_default, target_default, up_default, fov_default, scene->imageHeight, scene->imageWidth);
-
-    glm::vec3 testV1 = glm::vec3(0,-1,1);
-    glm::vec3 testV2 = glm::vec3(0,1,0);
-    glm::vec3 testV3 = glm::vec3(0,-1,-1);
-    scene->addTriangle(testV1,testV2,testV3,glm::vec3(0,255,0),glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(0,0,0),0.0f);
+    Scene* scene = readfile(argv[1]);
     
     // Find the colors for each pixel
     std::cout << "Beginning fill" <<std::endl;
