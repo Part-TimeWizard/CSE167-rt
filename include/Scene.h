@@ -15,8 +15,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <string>
+#include <algorithm> 
+#include <iostream> 
 #include <typeinfo> 
 #include <FreeImage.h>
+#include <math.h> 
 
 #pragma once
 
@@ -43,8 +46,7 @@ class Scene {
         void setPixel(int x, int y, glm::vec3 color);
         RayHit raycast(Ray ray); 
         bool isVisible(Ray ray);
-        glm::vec3 static findColor(RayHit* ray, vector<Light*> lights); 
-        glm::vec3 static findColor(Ray ray); 
+        glm::vec3 findColor(RayHit ray, std::vector<Light*> lights); 
 
     private:
         enum class TransformType {Translate, Rotate, Scale};

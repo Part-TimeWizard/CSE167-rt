@@ -11,4 +11,4 @@ Primitive::Primitive() {
     specular = glm::vec3(0,0,0);
     emission = glm::vec3(0,0,0);
     ambient = glm::vec3(0,0,0);
-}
+}; 

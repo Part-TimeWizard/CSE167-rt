@@ -12,6 +12,8 @@ public:
     // Attributes 
     glm::vec3 color;    // color of light source 
     glm::vec3 atten;    // light attenuations 
+    glm::vec3 pos;      // location of point source 
+    glm::vec3 dir;      // direction of directional light
 
     // Constructor
     Light(glm::vec3 color, glm::vec3 attenuation); 
@@ -24,7 +26,7 @@ public:
 class PointLight : public Light {
 public: 
     // Attributes 
-    glm::vec3 pos;      // Location of point source 
+    //glm::vec3 pos;      // Location of point source 
 
     // Constructor
     PointLight(glm::vec3 position, glm::vec3 color, glm::vec3 attenuation); 
@@ -37,7 +39,7 @@ public:
 class DirectionalLight : public Light {
 public: 
     // Attributes 
-    glm::vec3 dir;      // direction to light source 
+    //glm::vec3 dir;      // direction to light source 
 
     // Constructor
     DirectionalLight(glm::vec3 direction, glm::vec3 color, glm::vec3 attenuation); 
