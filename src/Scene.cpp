@@ -90,7 +90,7 @@ bool Scene::isVisible(Ray ray) {
     return false; 
 }
 
-glm::vec3 Scene::findColor(RayHit hray) {
+glm::vec3 Scene::findColor(RayHit hray, int maxDepth) {
   
     glm::vec3 finalColor; 
 
@@ -100,7 +100,10 @@ glm::vec3 Scene::findColor(RayHit hray) {
     glm::vec3 d = hray.solid->getDiffuse(); 
     glm::vec3 s = hray.solid->getSpecular();
     float sh = hray.solid->getShininess(); 
+    glm::vec3 v = glm::normalize(hray.ray.dir) * -1.0f; 
     glm::vec3 dsSum;                                // summation of diffuse & specular 
+    int depth = maxDepth; 
+    glm::vec3 shadowInt;                            // intersection point of shadow
 
 
     // iterate for each light 
@@ -121,7 +124,7 @@ glm::vec3 Scene::findColor(RayHit hray) {
             if (isVisible(shadowRay)) { vi = 1.0f; } 
             else { vi = 0.0f; }
 
-            halfa = glm::normalize(ldir - hray.ray.dir);    // determine half angle for point light 
+            halfa = glm::normalize(ldir - v);    // determine half angle for point light 
 
             dsSum += vi * light->colorAt(hray.pos) * (d * std::max(glm::dot(hray.normal, ldir), 0.0f) + s * (std::powf(std::max(glm::dot(hray.normal, halfa), 0.0f),sh))); 
         }
@@ -130,18 +133,32 @@ glm::vec3 Scene::findColor(RayHit hray) {
         else if (typeid(light) == typeid(DirectionalLight)) {
 
             // determine vi for directional light 
-            shadowRay = Ray(hray.pos, light->dir); 
-            if (isVisible(shadowRay)) { vi = 1.0f; }
-            else { vi = 0.0f; }
+            shadowRay = Ray(hray.pos, glm::normalize(light->dir)); 
+            if (isVisible(shadowRay)) { 
+                vi = 1.0f; 
+                shadowInt = shadowRay.dir; 
+            }
+            else { 
+                vi = 0.0f; 
+            }
 
-            halfa = glm::normalize(ldir - hray.ray.dir); 
+            halfa = glm::normalize(ldir - v); 
             dsSum += vi * light->color * (d * std::max(glm::dot(hray.normal, ldir), 0.0f) + s * (std::powf(std::max(glm::dot(hray.normal, halfa), 0.0f), sh)));
         }
     }
     std::cout<<"a: "<<a[0]<<","<<a[1]<<","<<a[2]<<std::endl;
     std::cout<<"e: "<<e[0]<<","<<e[1]<<","<<e[2]<<std::endl;
     std::cout<<"dsSum: "<<dsSum[0]<<","<<dsSum[1]<<","<<dsSum[2]<<std::endl<<std::endl;
-    finalColor = a + e + dsSum;
+    
+    // create mirror reflected ray 
+    glm::vec3 refdir = 2.0f * (glm::dot(hray.normal, v) * hray.normal - v); 
+    Ray mirRay(hray.pos, refdir);
+    RayHit mirHit(mirRay, nullptr, shadowInt);
+
+    // limit number of recursive calls based on maxDepth
+    while (depth != 0) {
+            finalColor = a + e + dsSum + s * findColor(mirHit, --depth);
+    }
     return finalColor; 
 }
 
@@ -158,7 +175,7 @@ void Scene::render() {
                 setPixel(x, y, glm::vec3(0,0,0));
             } else {
                 //setPixel(x,y,glm::vec3(0,255,0));
-                setPixel(x, y, findColor(intObj));
+                setPixel(x, y, findColor(intObj, maxDepth));
             }
         }
     }
