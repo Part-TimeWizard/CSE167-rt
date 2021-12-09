@@ -51,7 +51,7 @@
 #endif
 
 using namespace std;
-#include "main.h"
+//#include "main.h"
 #include "include/Scene.h"
 #include "include/Camera.h"
 
@@ -83,7 +83,7 @@ bool readvals(stringstream &s, const int numvals, GLfloat* values)
     return true;
 }
 
-void readfile(const char* filename, Scene* scene)
+Scene* readfile(const char* filename)
 {
     string str, cmd;
     ifstream in;
@@ -105,6 +105,8 @@ void readfile(const char* filename, Scene* scene)
 
     int maxVerts = 0;
     vector<glm::vec3> vertexList;
+
+    Scene* scene = nullptr;
 
     in.open(filename);
     if (in.is_open()) {
@@ -198,6 +200,7 @@ void readfile(const char* filename, Scene* scene)
                         // YOUR CODE HERE
                         // This the the image size, as width, height.
                         // Get these values and store them for use with your raytracer.
+                        std::cout<<"Generating Scene..."<<std::endl;
                         scene = new Scene(values[0],values[1]);
                     }
 
@@ -214,10 +217,16 @@ void readfile(const char* filename, Scene* scene)
                 else if (cmd == "camera") {
                     validinput = readvals(s,10,values); // 10 values eye cen up fov
                     if (validinput) {
+                        // May need to mult by transform stack
                         glm::vec3 eye = glm::vec3(values[0],values[1],values[2]);
                         glm::vec3 target = glm::vec3(values[3],values[4],values[5]);
                         glm::vec3 up = glm::vec3(values[6],values[7],values[8]);
                         float fov = values[9];
+                        std::cout << "Generating Camera..."<<std::endl;
+                        for (int i = 0; i < 10; i++){
+                            std::cout<< values[i]<< " ";
+                        }
+                        std::cout<<"\n";
                         scene->camera = new Camera(eye, target, up, fov, scene->imageHeight, scene->imageWidth);
                     }
                  }
@@ -269,6 +278,7 @@ void readfile(const char* filename, Scene* scene)
                     v1 = glm::vec3(T * glm::vec4(v1,1));
                     v2 = glm::vec3(T * glm::vec4(v2,1));
                     v3 = glm::vec3(T * glm::vec4(v3,1));
+                    std::cout<<"Creating Triangle ("<<v1[0]<<","<<v1[1]<<","<<v1[2]<<v2[0]<<","<<v2[1]<<","<<v2[2]<<v3[0]<<","<<v3[1]<<","<<v3[2]<<")"<<std::endl;
                     scene->addTriangle(v1,v2,v3,ambient,specular,diffuse,emission,shininess);
                 }
                 else if (cmd == "vertex") {
@@ -305,6 +315,7 @@ void readfile(const char* filename, Scene* scene)
         cerr << "Unable to Open Input Data File " << filename << "\n";
         throw 2;
     }
+    return scene;
 }
 
 void saveimg(std::vector<BYTE> pixels, int width, int height, const char* filename) {
@@ -320,26 +331,25 @@ void saveimg(std::vector<BYTE> pixels, int width, int height, const char* filena
 
 int main(int argc, char** argv) {
     
-    // Initialize Scene and Geometry
+    //Scene* scene = readfile(argv[1]);
+
+
+
     int tempWidth = 800;
     int tempHeight = 800;
-    string outName = "triangleTest.png";
-    Scene scene = Scene(tempWidth, tempHeight, 5, outName);
-    
-    glm::vec3 testV1 = glm::vec3(0,-1,1);
-    glm::vec3 testV2 = glm::vec3(0,1,0);
-    glm::vec3 testV3 = glm::vec3(0,-1,-1);
-    scene.addTriangle(testV1,testV2,testV3,glm::vec3(0,255,0),glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(0,0,0),0.0f);
-    //scene.objectStack[0]->setAmbient()
-
-    // Initialize test camera 
+    string outName = "outFile.png";
+    Scene* scene = new Scene(tempWidth, tempHeight, 5, outName);
     glm::vec3 eye_default = glm::vec3(-5.0f, 0.0f, 0.0f); 
     glm::vec3 target_default = glm::vec3(0.0f, 0.0f, 0.0f); 
     glm::vec3 up_default = glm::vec3(0.0f, 1.0f, 0.0f); 
     float fov_default = 30.0f; 
-    Camera cam(eye_default, target_default, up_default, fov_default, tempHeight, tempWidth); 
-    //cam.computeProjection(); 
+    scene -> camera = new Camera(eye_default, target_default, up_default, fov_default, scene->imageHeight, scene->imageWidth);
 
+    glm::vec3 testV1 = glm::vec3(0,-1,1);
+    glm::vec3 testV2 = glm::vec3(0,1,0);
+    glm::vec3 testV3 = glm::vec3(0,-1,-1);
+    scene->addTriangle(testV1,testV2,testV3,glm::vec3(0,255,0),glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(0,0,0),0.0f);
+    
     // Find the colors for each pixel
     std::cout << "Beginning fill" <<std::endl;
     /*
@@ -347,17 +357,16 @@ int main(int argc, char** argv) {
         scene.pixelData.push_back(static_cast<BYTE>(i));
     }
     */
-    for(int y = 0; y < tempHeight; y++) {
-        for(int x = 0; x < tempWidth; x++) {
-            Ray ray = cam.RayThruPixel(x, y); 
+    for(int y = 0; y < scene->imageHeight; y++) {
+        for(int x = 0; x < scene->imageWidth; x++) {
+            Ray ray = scene->camera->RayThruPixel(x, y); 
             
-            
-            RayHit intObj = scene.raycast(ray); 
+            RayHit intObj = scene->raycast(ray); 
             // Can access intObj.ray to use for FindColor() 
             if(intObj.solid == nullptr) {
-                scene.setPixel(x, y, glm::vec3(0,0,0));
+                scene->setPixel(x, y, glm::vec3(0,0,0));
             } else {
-                scene.setPixel(x,y,glm::vec3(0,255,0));
+                scene->setPixel(x,y,glm::vec3(0,255,0));
             }
             //scene.setPixel(x, y, glm::vec3(x,y,0));
         }
@@ -366,7 +375,7 @@ int main(int argc, char** argv) {
 
     // Export Image
     FreeImage_Initialise();
-    saveimg(scene.pixelData, tempWidth, tempHeight, outName.c_str());
+    saveimg(scene->pixelData, scene->imageWidth, scene->imageHeight, scene->outFileName.c_str());
     FreeImage_DeInitialise();
 
     // Deinitialize all the objects?
