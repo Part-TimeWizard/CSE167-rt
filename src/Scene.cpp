@@ -27,7 +27,7 @@ void Scene::setPixel(int x, int y, glm::vec3 color) {
 void Scene::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh) {
     Triangle* newTri = new Triangle(v1, v2, v3, a, sp, d, e, sh);
     objectStack.push_back(newTri);
-    std::cout<<"Triangle Created: "<<newTri<<"="<<objectStack[objectStack.size()-1]<<std::endl;
+    //std::cout<<"Triangle Created: "<<newTri<<"="<<objectStack[objectStack.size()-1]<<std::endl;
 }
 
 void Scene::addSphere(glm::vec3 p, float r, glm::mat4 t, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh) {
@@ -70,7 +70,7 @@ RayHit Scene::raycast(Ray ray) {
         float intDist = glm::distance(glm::vec3(intPos[0],intPos[1],intPos[2]), ray.ori); 
         
         if (intPos[3] == 1 && (firstHit || secDist > intDist)) {
-            std::cout<<"Hit"<<std::endl;
+            //std::cout<<"Hit"<<std::endl;
             intersection = RayHit(ray, solid, glm::vec3(intPos[0],intPos[1],intPos[2])); 
             firstHit = false; 
         }
@@ -138,9 +138,9 @@ glm::vec3 Scene::findColor(RayHit hray) {
             dsSum += vi * light->color * (d * std::max(glm::dot(hray.normal, ldir), 0.0f) + s * (std::powf(std::max(glm::dot(hray.normal, halfa), 0.0f), sh)));
         }
     }
-    std::cout<<"a: "<<a[0]<<","<<a[1]<<","<<a[2]<<std::endl;
-    std::cout<<"e: "<<e[0]<<","<<e[1]<<","<<e[2]<<std::endl;
-    std::cout<<"dsSum: "<<dsSum[0]<<","<<dsSum[1]<<","<<dsSum[2]<<std::endl<<std::endl;
+    //std::cout<<"a: "<<a[0]<<","<<a[1]<<","<<a[2]<<std::endl;
+    //std::cout<<"e: "<<e[0]<<","<<e[1]<<","<<e[2]<<std::endl;
+    //std::cout<<"dsSum: "<<dsSum[0]<<","<<dsSum[1]<<","<<dsSum[2]<<std::endl<<std::endl;
     finalColor = a + e + dsSum;
     return finalColor; 
 }

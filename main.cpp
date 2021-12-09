@@ -273,7 +273,8 @@ Scene* readfile(const char* filename)
                     validinput = readvals(s, 4, values);
                     glm::vec3 p = glm::vec3(values[0],values[1],values[2]);
                     //maybe transform p by t
-                    //scene->addSphere(p, values[3], transfstack.top(),ambient,specular,diffuse,emission,shininess);
+                    std::cout<<"Creating Sphere ("<<p[0]<<","<<p[1]<<","<<p[2]<<","<<values[3]<<")"<<std::endl;
+                    scene->addSphere(p, values[3], transfstack.top(),ambient,specular,diffuse,emission,shininess);
                 }
                 else if (cmd == "tri") {
                     validinput = readvals(s, 3, values);
