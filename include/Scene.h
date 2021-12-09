@@ -38,17 +38,20 @@ class Scene {
         glm::vec3 attenuation; 
         std::string outFileName;
         std::vector<Primitive*> objectStack; // Used to iterate thru and checkHit of all primitives
+        std::vector<Light*> lights;
         std::stack<glm::mat4> transformStack;
         Camera* camera;
 
         void addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh);
-        void addSphere(glm::vec3 p, float r, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh);
+        void addSphere(glm::vec3 p, float r, glm::mat4 t, glm::vec3 a, glm::vec3 sp, glm::vec3 d, glm::vec3 e, float sh);
+        void addLight(glm::vec3 v, glm::vec3 color, int type);
         void setDepth(int d){maxDepth = d;};
         void setName(std::string n){outFileName = n;};
         void setPixel(int x, int y, glm::vec3 color);
         RayHit raycast(Ray ray); 
         bool isVisible(Ray ray);
-        glm::vec3 findColor(RayHit ray, std::vector<Light*> lights); 
+        glm::vec3 findColor(RayHit ray); 
+        void render();
 
     private:
         /*
